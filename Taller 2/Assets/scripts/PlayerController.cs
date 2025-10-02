@@ -5,9 +5,15 @@ using UnityEditor.Experimental.GraphView;
 
 public class PlayerController : MonoBehaviour
 {
-    public float speed, jumpHeight;
+    public float speed;
+    public float jumpForce;
+
     private float velX, velY;
     private Rigidbody2D rb;
+    private Transform groundCheck;
+    private bool isGrounded;
+    public float groundCheckRadius;
+    public LayerMask whatIsGround;
 
     private void Start()
     {
@@ -16,16 +22,16 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        Movement();
+        isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, whatIsGround);
+
+        Move();
         Flip();
+        CheckGrounded();
         Jump();
     }
 
-
-
-
     // Método para mover al personaje
-    public void Movement()
+    public void Move()
     {
         velX = Input.GetAxisRaw("Horizontal");
         velY = rb.linearVelocity.y;
@@ -38,26 +44,29 @@ public class PlayerController : MonoBehaviour
     {
         if (rb.linearVelocity.x > 0)
         {
-            transform.localScale = new Vector3(3, 3, 3);
+            transform.localScale = new Vector3(1, 1, 1);
         }
         else if (rb.linearVelocity.x < 0)
         {
-            transform.localScale = new Vector3(-3, 3, 3);
+            transform.localScale = new Vector3(-1, 1, 1);
         }
     }
 
+    // Método para verificar si el personaje está tocando el suelo
+    private void CheckGrounded()
+    {
+        isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, whatIsGround);
+    }
+
+    // Método para saltar
     public void Jump()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (isGrounded && Input.GetKeyDown(KeyCode.Space))
         {
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpHeight);
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
         }
-
-
     }
-
 }
-
 
 
 

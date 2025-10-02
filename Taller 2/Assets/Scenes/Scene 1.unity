@@ -134,7 +134,7 @@ GameObject:
   m_Component:
   - component: {fileID: 50975268}
   - component: {fileID: 50975267}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: bg-5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -225,7 +225,7 @@ GameObject:
   - component: {fileID: 548409375}
   - component: {fileID: 548409377}
   - component: {fileID: 548409376}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Tilemap
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -72297,7 +72297,7 @@ GameObject:
   m_Component:
   - component: {fileID: 637059501}
   - component: {fileID: 637059500}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: bg-1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -72523,7 +72523,7 @@ GameObject:
   - component: {fileID: 867860995}
   - component: {fileID: 867860998}
   - component: {fileID: 867860999}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: hero-idle-1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -72622,9 +72622,10 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -37.7, y: -0.74, z: 0}
-  m_LocalScale: {x: 2.2231, y: 2.2231, z: 2.2231}
+  m_LocalScale: {x: 3, y: 3, z: 3}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1719319825}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!70 &867860998
@@ -72676,7 +72677,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 86a7558f5ba047f48930ab84ec9fb93a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 3
+  speed: 5
+  jumpForce: 5
+  groundCheckRadius: 0
+  whatIsGround:
+    serializedVersion: 2
+    m_Bits: 512
 --- !u!1 &982552540
 GameObject:
   m_ObjectHideFlags: 0
@@ -72687,7 +72693,7 @@ GameObject:
   m_Component:
   - component: {fileID: 982552542}
   - component: {fileID: 982552541}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: bg-3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -72774,7 +72780,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1017804324}
   - component: {fileID: 1017804323}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: bg-2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -73280,6 +73286,37 @@ PrefabInstance:
       addedObject: {fileID: 1055296496}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 75b47809907a21449baeacc3c04ecae9, type: 3}
+--- !u!1 &1719319824
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1719319825}
+  m_Layer: 8
+  m_Name: GroundCheck
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1719319825
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1719319824}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.03, y: -0.288, z: 0}
+  m_LocalScale: {x: 0.69594, y: 0.69594, z: 0.69594}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 867860997}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1826041764
 GameObject:
   m_ObjectHideFlags: 0
@@ -73427,7 +73464,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1905589032}
   - component: {fileID: 1905589031}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: column
   m_TagString: Untagged
   m_Icon: {fileID: 0}
