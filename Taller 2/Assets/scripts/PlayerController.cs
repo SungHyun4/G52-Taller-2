@@ -20,6 +20,7 @@ public class PlayerController : MonoBehaviour
         Move();
         Flip();
         Jump();
+        
 
         if (isGrounded) 
         {
@@ -29,6 +30,7 @@ public class PlayerController : MonoBehaviour
         {
             anim.SetBool("jump", true);
         }
+        attack();
     }
 
     // Movimiento
@@ -48,6 +50,21 @@ public class PlayerController : MonoBehaviour
         }
 
     }
+
+    public void attack()
+    {
+        if (Input.GetButtonDown("Fire1"))
+        {
+            anim.SetBool("attack", true);
+        }
+        else
+        {
+            anim.SetBool("attack", false);
+        }
+    }
+
+
+
 
     // Voltear sprite
     public void Flip()
