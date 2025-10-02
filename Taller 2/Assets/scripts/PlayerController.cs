@@ -1,64 +1,64 @@
 using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
 
 public class PlayerController : MonoBehaviour
 {
     public float speed;
-    public float jumpForce;
-
+    public float jumpForce; // fuerza del salto
     private float velX, velY;
     private Rigidbody2D rb;
-    private Transform groundCheck;
-    private bool isGrounded;
-    public float groundCheckRadius;
-    public LayerMask whatIsGround;
 
+    private bool isGrounded;
+    Animator anim;
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        anim = GetComponent<Animator>();
     }
 
     private void Update()
     {
-        isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, whatIsGround);
-
         Move();
         Flip();
-        CheckGrounded();
         Jump();
+
+        if (isGrounded) 
+        {
+            anim.SetBool("jump", false);
+        }
+        else 
+        {
+            anim.SetBool("jump", true);
+        }
     }
 
-    // Método para mover al personaje
+    // Movimiento
     public void Move()
     {
         velX = Input.GetAxisRaw("Horizontal");
         velY = rb.linearVelocity.y;
-
         rb.linearVelocity = new Vector2(velX * speed, velY);
+
+        if (rb.linearVelocity.x != 0)
+        {
+            anim.SetBool("walk", true);
+        }
+        else
+        {
+            anim.SetBool("walk", false);
+        }
+
     }
 
-    // Método para voltear al personaje según la dirección de movimiento
+    // Voltear sprite
     public void Flip()
     {
         if (rb.linearVelocity.x > 0)
-        {
-            transform.localScale = new Vector3(1, 1, 1);
-        }
+            transform.localScale = new Vector3(3, 3, 3);
         else if (rb.linearVelocity.x < 0)
-        {
-            transform.localScale = new Vector3(-1, 1, 1);
-        }
+            transform.localScale = new Vector3(-3, 3, 3);
     }
 
-    // Método para verificar si el personaje está tocando el suelo
-    private void CheckGrounded()
-    {
-        isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, whatIsGround);
-    }
-
-    // Método para saltar
+    // Salto
     public void Jump()
     {
         if (isGrounded && Input.GetKeyDown(KeyCode.Space))
@@ -66,7 +66,21 @@ public class PlayerController : MonoBehaviour
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
         }
     }
+
+    // Detectar si toca el suelo
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
+        {
+            isGrounded = true;
+        }
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
+        {
+            isGrounded = false;
+        }
+    }
 }
-
-
-

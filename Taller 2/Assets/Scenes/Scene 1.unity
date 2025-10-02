@@ -72523,6 +72523,7 @@ GameObject:
   - component: {fileID: 867860995}
   - component: {fileID: 867860998}
   - component: {fileID: 867860999}
+  - component: {fileID: 867861000}
   m_Layer: 8
   m_Name: hero-idle-1
   m_TagString: Untagged
@@ -72679,10 +72680,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 5
   jumpForce: 5
-  groundCheckRadius: 0
-  whatIsGround:
-    serializedVersion: 2
-    m_Bits: 512
+--- !u!95 &867861000
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 867860994}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: a0c2842e514366b47b6791e0ffdb1672, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &982552540
 GameObject:
   m_ObjectHideFlags: 0
@@ -73082,7 +73101,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1338274985}
   - component: {fileID: 1338274984}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Grid
   m_TagString: Untagged
   m_Icon: {fileID: 0}
