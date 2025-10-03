@@ -22,23 +22,16 @@ public class Enemy : MonoBehaviour
         // Buscar al jugador
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj != null)
-        {
             player = playerObj.transform;
-        }
         else
-        {
             Debug.LogWarning("No se encontró un objeto con tag 'Player'");
-        }
 
-        // Fijar tamaño inicial
-        transform.localScale = new Vector3(4f, 3f, 1f);
+        // Posición neutral mirando izquierda
+        transform.localScale = new Vector3(-4f, 3f, 1f);
     }
 
     private void Update()
     {
-        // Mantener tamaño fijo
-        transform.localScale = new Vector3(4f, 3f, 1f);
-
         if (!isDead)
         {
             MoveTowardsPlayer();
@@ -53,14 +46,22 @@ public class Enemy : MonoBehaviour
         if (distance <= detectionRange)
         {
             Vector2 direction = (player.position - transform.position).normalized;
+
+            // Mover enemigo
             transform.position += (Vector3)(direction * speed * Time.deltaTime);
 
-            // Girar según dirección
-            if (direction.x > 0)
-                transform.localScale = new Vector3(4f, 3f, 1f);
-            else if (direction.x < 0)
-                transform.localScale = new Vector3(-4f, 3f, 1f);
+            // Voltear según posición del jugador
+            Flip(direction.x);
         }
+    }
+
+    // Función para voltear enemigo
+    private void Flip(float horizontalDirection)
+    {
+        if (horizontalDirection > 0)
+            transform.localScale = new Vector3(-4f, 3f, 1f);  // Mirando derecha
+        else if (horizontalDirection < 0)
+            transform.localScale = new Vector3(4f, 3f, 1f); // Mirando izquierda (neutral)
     }
 
     private void OnTriggerStay2D(Collider2D collision)
@@ -80,6 +81,7 @@ public class Enemy : MonoBehaviour
 
         if (collision.CompareTag("Player") && !isDead && Time.time - lastDamageTime >= damageCooldown)
         {
+            Debug.Log("Enemigo hizo daño al jugador"); //prueba
             PlayerController playerCtrl = collision.GetComponent<PlayerController>();
             if (playerCtrl != null)
             {
@@ -89,19 +91,20 @@ public class Enemy : MonoBehaviour
         }
     }
 
+
     private void Die()
     {
         isDead = true;
-        animator.SetTrigger("death");
 
-        // Destruir objeto después de animación
-        AnimatorClipInfo[] clipInfo = animator.GetCurrentAnimatorClipInfo(0);
-        float deathAnimLength = 1f;
-        if (clipInfo.Length > 0)
+        if (animator != null)
         {
-            deathAnimLength = clipInfo[0].clip.length;
+            animator.SetTrigger("death");
+            Destroy(gameObject, 1f); // Aquí pones el tiempo que dura tu animación en segundos
         }
-
-        Destroy(gameObject, deathAnimLength);
+        else
+        {
+            Destroy(gameObject);
+        }
     }
+
 }

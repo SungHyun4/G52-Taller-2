@@ -85,15 +85,6 @@ public class PlayerController : MonoBehaviour
             isGrounded = false;
     }
 
-    // Detectar daño de enemigos con cooldown
-    private void OnTriggerStay2D(Collider2D collision)
-    {
-        if (collision.CompareTag("Enemy") && Time.time - lastDamageTime >= damageCooldown)
-        {
-            TakeDamage(1f); // Daño del enemigo, puedes cambiarlo
-            lastDamageTime = Time.time;
-        }
-    }
 
     // Función para recibir daño
     public void TakeDamage(float amount)
@@ -110,8 +101,18 @@ public class PlayerController : MonoBehaviour
     private void Die()
     {
         Debug.Log("Jugador muerto");
-        anim.SetTrigger("death");
         rb.linearVelocity = Vector2.zero;
-        // Aquí puedes reiniciar la escena o mostrar Game Over
+        gameObject.SetActive(false);
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        // Detectar pinchos
+        if (collision.CompareTag("Pinchos"))
+        {
+            currentHealth = 0f;
+            Die();
+        }
     }
 }
+
