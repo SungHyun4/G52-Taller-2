@@ -2,17 +2,28 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    [Header("Movimiento")]
     public float speed;
-    public float jumpForce; // fuerza del salto
+    public float jumpForce;
     private float velX, velY;
     private Rigidbody2D rb;
-
     private bool isGrounded;
-    Animator anim;
+
+    private Animator anim;
+
+    [Header("Vida del jugador")]
+    public float maxHealth = 10f;
+    public float currentHealth;
+
+    [Header("Daño enemigo")]
+    public float damageCooldown = 1f; // Tiempo entre daños si está en contacto
+    private float lastDamageTime = 0f;
+
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
+        currentHealth = maxHealth;
     }
 
     private void Update()
@@ -20,17 +31,12 @@ public class PlayerController : MonoBehaviour
         Move();
         Flip();
         Jump();
-        
-
-        if (isGrounded) 
-        {
-            anim.SetBool("jump", false);
-        }
-        else 
-        {
-            anim.SetBool("jump", true);
-        }
         attack();
+
+        if (isGrounded)
+            anim.SetBool("jump", false);
+        else
+            anim.SetBool("jump", true);
     }
 
     // Movimiento
@@ -40,31 +46,13 @@ public class PlayerController : MonoBehaviour
         velY = rb.linearVelocity.y;
         rb.linearVelocity = new Vector2(velX * speed, velY);
 
-        if (rb.linearVelocity.x != 0)
-        {
-            anim.SetBool("walk", true);
-        }
-        else
-        {
-            anim.SetBool("walk", false);
-        }
-
+        anim.SetBool("walk", rb.linearVelocity.x != 0);
     }
 
     public void attack()
     {
-        if (Input.GetButtonDown("Fire1"))
-        {
-            anim.SetBool("attack", true);
-        }
-        else
-        {
-            anim.SetBool("attack", false);
-        }
+        anim.SetBool("attack", Input.GetButtonDown("Fire1"));
     }
-
-
-
 
     // Voltear sprite
     public void Flip()
@@ -88,16 +76,42 @@ public class PlayerController : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
-        {
             isGrounded = true;
-        }
     }
 
     private void OnCollisionExit2D(Collision2D collision)
     {
         if (collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
-        {
             isGrounded = false;
+    }
+
+    // Detectar daño de enemigos con cooldown
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Enemy") && Time.time - lastDamageTime >= damageCooldown)
+        {
+            TakeDamage(1f); // Daño del enemigo, puedes cambiarlo
+            lastDamageTime = Time.time;
         }
+    }
+
+    // Función para recibir daño
+    public void TakeDamage(float amount)
+    {
+        currentHealth -= amount;
+        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+
+        Debug.Log("Jugador recibió daño. Vida actual: " + currentHealth);
+
+        if (currentHealth <= 0)
+            Die();
+    }
+
+    private void Die()
+    {
+        Debug.Log("Jugador muerto");
+        anim.SetTrigger("death");
+        rb.linearVelocity = Vector2.zero;
+        // Aquí puedes reiniciar la escena o mostrar Game Over
     }
 }
