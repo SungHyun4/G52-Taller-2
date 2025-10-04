@@ -8,22 +8,16 @@ public class PlayerController : MonoBehaviour
     private float velX, velY;
     private Rigidbody2D rb;
     private bool isGrounded;
-
     private Animator anim;
 
-    [Header("Vida del jugador")]
-    public float maxHealth = 10f;
-    public float currentHealth;
-
     [Header("Daño enemigo")]
-    public float damageCooldown = 1f; // Tiempo entre daños si está en contacto
+    public float damageCooldown = 1f;
     private float lastDamageTime = 0f;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
-        currentHealth = maxHealth;
     }
 
     private void Update()
@@ -31,30 +25,23 @@ public class PlayerController : MonoBehaviour
         Move();
         Flip();
         Jump();
-        attack();
-
-        if (isGrounded)
-            anim.SetBool("jump", false);
-        else
-            anim.SetBool("jump", true);
+        Attack();
+        anim.SetBool("jump", !isGrounded);
     }
 
-    // Movimiento
     public void Move()
     {
         velX = Input.GetAxisRaw("Horizontal");
         velY = rb.linearVelocity.y;
         rb.linearVelocity = new Vector2(velX * speed, velY);
-
         anim.SetBool("walk", rb.linearVelocity.x != 0);
     }
 
-    public void attack()
+    public void Attack()
     {
         anim.SetBool("attack", Input.GetButtonDown("Fire1"));
     }
 
-    // Voltear sprite
     public void Flip()
     {
         if (rb.linearVelocity.x > 0)
@@ -63,16 +50,12 @@ public class PlayerController : MonoBehaviour
             transform.localScale = new Vector3(-3, 3, 3);
     }
 
-    // Salto
     public void Jump()
     {
         if (isGrounded && Input.GetKeyDown(KeyCode.Space))
-        {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
-        }
     }
 
-    // Detectar si toca el suelo
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.layer == LayerMask.NameToLayer("Ground"))
@@ -85,34 +68,40 @@ public class PlayerController : MonoBehaviour
             isGrounded = false;
     }
 
-
-    // Función para recibir daño
-    public void TakeDamage(float amount)
+    // Función de daño
+    public void TakeDamage()
     {
-        currentHealth -= amount;
-        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+        if (Time.time - lastDamageTime < damageCooldown)
+            return;
 
-        Debug.Log("Jugador recibió daño. Vida actual: " + currentHealth);
+        lastDamageTime = Time.time;
+        GameManager.Instance.RestarVida();
 
-        if (currentHealth <= 0)
+        if (GameManager.Instance.vidas <= 0)
+        {
             Die();
+        }
     }
 
     private void Die()
     {
-        Debug.Log("Jugador muerto");
+        Debug.Log("Jugador sin vidas -> Game Over");
         rb.linearVelocity = Vector2.zero;
         gameObject.SetActive(false);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        // Detectar pinchos
         if (collision.CompareTag("Pinchos"))
         {
-            currentHealth = 0f;
+            // Quita todas las vidas
+            GameManager.Instance.vidas = 0;
+
+            // Actualizar HUD
+            if (HUDManager.Instance != null)
+                HUDManager.Instance.ActualizarVidas();
+
             Die();
         }
     }
-}
-
+    }

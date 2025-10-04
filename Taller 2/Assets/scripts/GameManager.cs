@@ -4,13 +4,17 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
-    private float Globaltime = 0;
-    public float Globaltime1 { get => Globaltime; set => Globaltime = value; }
+    // Tiempo global de todo el juego (accesible públicamente)
+    public float GlobaltimeTotal { get; set; } = 0f;
 
     [Header("Coleccionables")]
     public int monedasBronce = 0;
     public int gemasRojas = 0;
     public int gemasVerdes = 0;
+
+    [Header("Jugador - Vidas")]
+    public int maxVidas = 10;
+    public int vidas = 10;
 
     private void Awake()
     {
@@ -19,14 +23,8 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-
         Instance = this;
         DontDestroyOnLoad(gameObject);
-    }
-
-    public void SumaTimeGlobal(float timeScene)
-    {
-        Globaltime += timeScene;
     }
 
     // -------------------------------
@@ -38,18 +36,39 @@ public class GameManager : MonoBehaviour
         {
             case Collectible.CollectibleType.MonedaBronce:
                 monedasBronce++;
-                Debug.Log($"Jugador recogió una Moneda de Bronce. Total: {monedasBronce}");
                 break;
-
             case Collectible.CollectibleType.GemaRoja:
                 gemasRojas++;
-                Debug.Log($"Jugador recogió una Gema Roja. Total: {gemasRojas}");
                 break;
-
             case Collectible.CollectibleType.GemaVerde:
                 gemasVerdes++;
-                Debug.Log($"Jugador recogió una Gema Verde. Total: {gemasVerdes}");
                 break;
+        }
+
+        if (HUDManager.Instance != null)
+            HUDManager.Instance.ActualizarHUD();
+    }
+
+    // -------------------------------
+    // Funciones para manejar vidas
+    // -------------------------------
+    public void RestarVida()
+    {
+        if (vidas > 0)
+        {
+            vidas--;
+            if (HUDManager.Instance != null)
+                HUDManager.Instance.ActualizarVidas();
+        }
+    }
+
+    public void SumarVida()
+    {
+        if (vidas < maxVidas)
+        {
+            vidas++;
+            if (HUDManager.Instance != null)
+                HUDManager.Instance.ActualizarVidas();
         }
     }
 }

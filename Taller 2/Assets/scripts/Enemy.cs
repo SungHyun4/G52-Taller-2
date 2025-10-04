@@ -55,7 +55,6 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    // Función para voltear enemigo
     private void Flip(float horizontalDirection)
     {
         if (horizontalDirection > 0)
@@ -66,31 +65,27 @@ public class Enemy : MonoBehaviour
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if (collision.CompareTag("Weapon") && !isDead)
+        if (isDead) return;
+
+        // Daño por arma
+        if (collision.CompareTag("Weapon"))
         {
             Weapon weapon = collision.GetComponent<Weapon>();
             if (weapon != null)
             {
                 healthPoints -= weapon.damage;
                 if (healthPoints <= 0)
-                {
                     Die();
-                }
             }
         }
 
-        if (collision.CompareTag("Player") && !isDead && Time.time - lastDamageTime >= damageCooldown)
+        // Daño al jugador
+        if (collision.CompareTag("Player") && Time.time - lastDamageTime >= damageCooldown)
         {
-            Debug.Log("Enemigo hizo daño al jugador"); //prueba
-            PlayerController playerCtrl = collision.GetComponent<PlayerController>();
-            if (playerCtrl != null)
-            {
-                playerCtrl.TakeDamage(damage);
-                lastDamageTime = Time.time;
-            }
+            GameManager.Instance.RestarVida();
+            lastDamageTime = Time.time;
         }
     }
-
 
     private void Die()
     {
@@ -99,12 +94,11 @@ public class Enemy : MonoBehaviour
         if (animator != null)
         {
             animator.SetTrigger("death");
-            Destroy(gameObject, 1f); // Aquí pones el tiempo que dura tu animación en segundos
+            Destroy(gameObject, 1f); // Duración de la animación
         }
         else
         {
             Destroy(gameObject);
         }
     }
-
 }
