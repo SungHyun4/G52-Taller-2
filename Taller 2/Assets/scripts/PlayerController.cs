@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement; // Para cargar la escena GameOver
 
 public class PlayerController : MonoBehaviour
 {
@@ -27,6 +28,12 @@ public class PlayerController : MonoBehaviour
         Jump();
         Attack();
         anim.SetBool("jump", !isGrounded);
+
+        // NUEVO: Verificar vida estrictamente cada frame
+        if (GameManager.Instance.vidas <= 0)
+        {
+            Die();
+        }
     }
 
     public void Move()
@@ -68,7 +75,6 @@ public class PlayerController : MonoBehaviour
             isGrounded = false;
     }
 
-    // Función de daño
     public void TakeDamage()
     {
         if (Time.time - lastDamageTime < damageCooldown)
@@ -77,10 +83,7 @@ public class PlayerController : MonoBehaviour
         lastDamageTime = Time.time;
         GameManager.Instance.RestarVida();
 
-        if (GameManager.Instance.vidas <= 0)
-        {
-            Die();
-        }
+        // Ya no es necesario verificar aquí, se hace en Update
     }
 
     private void Die()
@@ -88,20 +91,21 @@ public class PlayerController : MonoBehaviour
         Debug.Log("Jugador sin vidas -> Game Over");
         rb.linearVelocity = Vector2.zero;
         gameObject.SetActive(false);
+
+        // Cargar escena GameOver
+        SceneManager.LoadScene("GameOver");
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Pinchos"))
         {
-            // Quita todas las vidas
             GameManager.Instance.vidas = 0;
 
-            // Actualizar HUD
             if (HUDManager.Instance != null)
                 HUDManager.Instance.ActualizarVidas();
 
             Die();
         }
     }
-    }
+}

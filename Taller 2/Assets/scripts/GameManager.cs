@@ -4,8 +4,8 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
-    // Tiempo global de todo el juego (accesible públicamente)
-    public float GlobaltimeTotal { get; set; } = 0f;
+    [Header("Tiempo global de juego")]
+    public float GlobaltimeTotal = 0f;
 
     [Header("Coleccionables")]
     public int monedasBronce = 0;
@@ -25,6 +25,12 @@ public class GameManager : MonoBehaviour
         }
         Instance = this;
         DontDestroyOnLoad(gameObject);
+    }
+
+    private void Update()
+    {
+        // Contador de tiempo global
+        GlobaltimeTotal += Time.deltaTime;
     }
 
     // -------------------------------
